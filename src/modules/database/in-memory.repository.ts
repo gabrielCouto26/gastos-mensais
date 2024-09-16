@@ -27,7 +27,7 @@ export default class InMemoryRepository<T> implements IDatabase<T> {
       });
     } catch (error) {
       throw new Error(
-        `Failed to find Expense with params ${params}. Original Error: ${error}`,
+        `Failed to find Expense with params ${JSON.stringify(params)}. Original Error: ${error}`,
       );
     }
   }
@@ -39,7 +39,7 @@ export default class InMemoryRepository<T> implements IDatabase<T> {
       return item;
     } catch (error) {
       throw new Error(
-        `Failed to save Expense ${item}. Original Error: ${error}`,
+        `Failed to save Expense ${JSON.stringify(item)}. Original Error: ${error}`,
       );
     }
   }

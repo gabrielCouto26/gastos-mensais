@@ -3,8 +3,8 @@ import { IDatabase } from 'src/shared/database.interface';
 
 @Injectable()
 export default class InMemoryRepository<T> implements IDatabase<T> {
+  private items: T[] = [];
   table: string;
-  items: T[] = [];
 
   constructor(table: string) {
     this.table = table;
@@ -33,25 +33,15 @@ export default class InMemoryRepository<T> implements IDatabase<T> {
   }
   save(item: T): T {
     try {
-      const items = this.getItems();
-      const added = { ...items, item };
-      this.setItems(added);
-      return item;
+      const newItem = {
+        id: this.autoIncrement(),
+        ...item,
+      };
+      this.addItem(newItem);
+      return newItem;
     } catch (error) {
       throw new Error(
         `Failed to save Expense ${JSON.stringify(item)}. Original Error: ${error}`,
-      );
-    }
-  }
-  update(id: string, item: T): T {
-    try {
-      this.delete(id);
-      const updated = { id, ...item };
-      this.save(updated);
-      return updated;
-    } catch (error) {
-      throw new Error(
-        `Failed to update Expense ${id}. Original Error: ${error}`,
       );
     }
   }
@@ -67,11 +57,21 @@ export default class InMemoryRepository<T> implements IDatabase<T> {
     }
   }
 
-  private getItems() {
+  private getItems(): T[] {
     return this.items;
   }
 
-  private setItems(items: T[]) {
+  private setItems(items: T[]): void {
     this.items = items;
+  }
+
+  private addItem(item: T): void {
+    this.items.push(item);
+  }
+
+  private autoIncrement(): string {
+    if (!this.items.length) return '1';
+    const newId = Number(this.items[this.items.length - 1]['id']) + 1;
+    return newId.toString();
   }
 }

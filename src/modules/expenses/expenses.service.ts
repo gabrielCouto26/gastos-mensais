@@ -24,8 +24,8 @@ export class ExpensesService {
     const expense = this.repo.findOne({ id });
     if (!expense) return null;
 
-    const updated = this.repo.update(id, params);
-    return this.repo.save(updated);
+    this.repo.delete(id);
+    return this.repo.save(params);
   }
 
   remove(id: string): void {

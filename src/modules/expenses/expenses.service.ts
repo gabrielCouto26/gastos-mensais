@@ -13,22 +13,22 @@ export class ExpensesService {
     return this.repo.find();
   }
 
-  findOne(id: number): IExpense | null {
+  findOne(id: string): IExpense | null {
     return this.repo.findOne({ id });
   }
 
   create(expense: IExpense): IExpense {
     return this.repo.save(expense);
   }
-  update(id: number, params: IExpense): IExpense | null {
+  update(id: string, params: IExpense): IExpense | null {
     const expense = this.repo.findOne({ id });
     if (!expense) return null;
 
-    const updated = this.repo.update(id.toString(), params);
+    const updated = this.repo.update(id, params);
     return this.repo.save(updated);
   }
 
-  remove(id: number): void {
-    this.repo.delete(id.toString());
+  remove(id: string): void {
+    this.repo.delete(id);
   }
 }

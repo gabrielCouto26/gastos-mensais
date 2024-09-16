@@ -23,7 +23,7 @@ export class ExpensesController {
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<IExpense> {
-    return await this.service.findOne(+id);
+    return await this.service.findOne(id);
   }
 
   @Post()
@@ -36,11 +36,11 @@ export class ExpensesController {
     @Param('id') id: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
   ): Promise<IExpense> {
-    return await this.service.update(+id, updateExpenseDto);
+    return await this.service.update(id, updateExpenseDto);
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<void> {
-    return await this.service.remove(+id);
+    return await this.service.remove(id);
   }
 }

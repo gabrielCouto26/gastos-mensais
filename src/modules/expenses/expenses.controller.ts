@@ -17,30 +17,30 @@ export class ExpensesController {
   constructor(private readonly service: ExpensesService) {}
 
   @Get()
-  findAll(): IExpense[] {
-    return this.service.findAll();
+  async findAll(): Promise<IExpense[]> {
+    return await this.service.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): IExpense {
-    return this.service.findOne(id);
+  async findOne(@Param('id') id: string): Promise<IExpense> {
+    return await this.service.findOne(id);
   }
 
   @Post()
-  create(@Body() createExpenseDto: CreateExpenseDto): IExpense {
-    return this.service.create(createExpenseDto);
+  async create(@Body() createExpenseDto: CreateExpenseDto): Promise<IExpense> {
+    return await this.service.create(createExpenseDto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
-  ): IExpense {
-    return this.service.update(id, updateExpenseDto);
+  ): Promise<IExpense> {
+    return await this.service.update(id, updateExpenseDto);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string): void {
-    return this.service.remove(id);
+  async delete(@Param('id') id: string): Promise<void> {
+    return await this.service.remove(id);
   }
 }

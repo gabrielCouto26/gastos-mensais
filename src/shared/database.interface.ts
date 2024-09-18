@@ -1,6 +1,6 @@
 export interface IDatabase<T> {
-  find(): T[];
-  findOne(params: Record<string, any>): T | undefined;
-  save(item: T): T;
-  delete(id: string): void;
+  find(): T[] | Promise<T[]>;
+  findOne(params: Record<string, any>): T | Promise<T> | undefined;
+  save(item: T): T | Promise<T>;
+  delete(id: string): void | Promise<void>;
 }

@@ -5,30 +5,30 @@ import { IDatabase } from 'src/shared/database.interface';
 @Injectable()
 export class ExpensesService {
   constructor(
-    @Inject('InMemoryRepository')
+    @Inject('ExpensesRepository')
     private repo: IDatabase<IExpense>,
   ) {}
 
-  findAll(): IExpense[] {
-    return this.repo.find();
+  async findAll(): Promise<IExpense[]> {
+    return await this.repo.find();
   }
 
-  findOne(id: string): IExpense | null {
-    return this.repo.findOne({ id });
+  async findOne(id: string): Promise<IExpense> | undefined {
+    return await this.repo.findOne({ id });
   }
 
-  create(expense: IExpense): IExpense {
-    return this.repo.save(expense);
+  async create(expense: IExpense): Promise<IExpense> {
+    return await this.repo.save(expense);
   }
-  update(id: string, params: IExpense): IExpense | null {
-    const expense = this.repo.findOne({ id });
+  async update(id: string, params: IExpense): Promise<IExpense> | null {
+    const expense = await this.repo.findOne({ id });
     if (!expense) return null;
 
     this.repo.delete(id);
-    return this.repo.save(params);
+    return await this.repo.save(params);
   }
 
-  remove(id: string): void {
-    this.repo.delete(id);
+  async remove(id: string): Promise<void> {
+    await this.repo.delete(id);
   }
 }

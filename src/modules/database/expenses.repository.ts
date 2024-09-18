@@ -37,6 +37,17 @@ export default class ExpensesRepository implements IDatabase<Expense> {
       );
     }
   }
+  async update(id: string, item: Expense): Promise<Expense> {
+    try {
+      return await this.model
+        .findByIdAndUpdate({ _id: id }, item, { new: true })
+        .exec();
+    } catch (error) {
+      throw new Error(
+        `Failed to delete Expense ${id}. Original Error: ${error}`,
+      );
+    }
+  }
   async delete(id: string): Promise<void> {
     try {
       await this.model.findByIdAndDelete({ _id: id }).exec();

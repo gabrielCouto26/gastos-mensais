@@ -5,7 +5,7 @@ export type CatDocument = HydratedDocument<Expense>;
 
 @Schema()
 export class Expense {
-  @Prop({ unique: true })
+  @Prop({ unique: true, index: true })
   id: number;
 
   @Prop({ required: true })

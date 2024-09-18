@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IExpense } from './interface/expense.interface';
 import { IDatabase } from 'src/shared/database.interface';
+import { CreateExpenseDto } from './dto/create-expense.dto';
+import { UpdateExpenseDto } from './dto/update-expense.dto';
 
 @Injectable()
 export class ExpensesService {
@@ -17,15 +19,15 @@ export class ExpensesService {
     return await this.repo.findOne({ id });
   }
 
-  async create(expense: IExpense): Promise<IExpense> {
-    return await this.repo.save(expense);
+  async create(expense: CreateExpenseDto): Promise<IExpense> {
+    if (!expense.date) expense.date = new Date();
+    return await this.repo.save(expense as IExpense);
   }
-  async update(id: string, params: IExpense): Promise<IExpense> | null {
+  async update(id: string, params: UpdateExpenseDto): Promise<IExpense> | null {
     const expense = await this.repo.findOne({ id });
     if (!expense) return null;
 
-    this.repo.delete(id);
-    return await this.repo.save(params);
+    return await this.repo.update(id, params as IExpense);
   }
 
   async remove(id: string): Promise<void> {

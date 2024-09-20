@@ -1,0 +1,5 @@
+if git diff --cached --name-only | grep -E '^src'; then
+  npm run test
+else
+  echo "Nenhuma modificação no diretório src/."
+fi

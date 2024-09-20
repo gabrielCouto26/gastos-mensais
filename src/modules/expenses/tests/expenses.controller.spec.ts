@@ -2,8 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ExpensesController } from '../expenses.controller';
 import { ExpensesModule } from '../expenses.module';
 import {
-  expensePayload,
-  expenseResponse,
+  createExpensePayload,
+  createExpenseResponse,
+  findAllExpenseResponse,
+  findOneExpenseResponse,
   updateExpensePayload,
   updateExpenseResponse,
 } from './fixtures/expense';
@@ -20,8 +22,6 @@ describe('ExpensesController', () => {
 
     controller = app.get<ExpensesController>(ExpensesController);
     service = app.get<ExpensesService>(ExpensesService);
-
-    addExpense(service);
   });
 
   it('expects controller to de defined', () => {
@@ -29,49 +29,67 @@ describe('ExpensesController', () => {
   });
 
   describe('findAll', () => {
-    it('should return all Expenses', () => {
-      expect(controller.findAll()).toHaveLength(1);
-      expect(controller.findAll()).toEqual([expenseResponse]);
+    it('should return all Expenses', async () => {
+      jest
+        .spyOn(service, 'findAll')
+        .mockResolvedValueOnce(findAllExpenseResponse);
+
+      const expenses = await controller.findAll();
+      expect(expenses).toHaveLength(3);
+      expect(expenses).toEqual(findAllExpenseResponse);
     });
   });
 
   describe('findOne', () => {
-    it('should return one Expensee', () => {
-      expect(controller.findOne('1')).toBeDefined();
-      expect(controller.findOne('1')).toEqual(expenseResponse);
+    it('should return one Expense', async () => {
+      jest
+        .spyOn(service, 'findOne')
+        .mockResolvedValueOnce(findOneExpenseResponse);
+
+      const expense = await controller.findOne('1');
+      expect(expense).toBeDefined();
+      expect(expense).toEqual(findOneExpenseResponse);
     });
   });
 
   describe('create', () => {
-    it('should create one Expensee', () => {
-      const created = controller.create(expensePayload);
-      expect(created).toBeDefined();
-      expect(Object.keys(created)).toEqual(Object.keys(expenseResponse));
-      expect(created.name).toEqual(expenseResponse.name);
-      expect(created.description).toEqual(expenseResponse.description);
-      expect(created.value).toEqual(expenseResponse.value);
+    it('should create one Expense', async () => {
+      jest
+        .spyOn(service, 'create')
+        .mockResolvedValueOnce(createExpenseResponse);
+
+      const expense = await controller.create(createExpensePayload);
+
+      expect(expense).toBeDefined();
+      expect(Object.keys(expense)).toEqual(Object.keys(createExpenseResponse));
+      expect(Object.values(expense)).toEqual(
+        Object.values(createExpenseResponse),
+      );
     });
   });
 
   describe('update', () => {
-    it('should update one Expensee', () => {
-      const updated = controller.update('1', updateExpensePayload);
-      expect(updated).toBeDefined();
-      expect(Object.keys(updated)).toEqual(Object.keys(updateExpenseResponse));
-      expect(updated.name).toEqual(updateExpenseResponse.name);
-      expect(updated.description).toEqual(updateExpenseResponse.description);
-      expect(updated.value).toEqual(updateExpenseResponse.value);
+    it('should update one Expense', async () => {
+      jest.spyOn(service, 'update').mockResolvedValueOnce(updateExpensePayload);
+
+      const expense = await controller.update('1', updateExpensePayload);
+
+      expect(expense).toBeDefined();
+      expect(expense.name).toEqual(updateExpenseResponse.name);
+      expect(expense.description).toEqual(updateExpenseResponse.description);
+      expect(expense.value).toEqual(updateExpenseResponse.value);
     });
   });
 
-  describe('delete', () => {
-    it('should delete one Expensee', () => {
-      controller.delete('1');
-      expect(service.findAll()).toHaveLength(0);
+  describe('remove', () => {
+    it('should remove one Expense', async () => {
+      const removeSpy = jest
+        .spyOn(service, 'remove')
+        .mockResolvedValueOnce(null);
+
+      await controller.delete('1');
+
+      expect(removeSpy).toHaveBeenCalledWith('1');
     });
   });
 });
-
-function addExpense(service: ExpensesService) {
-  service.create(expensePayload);
-}
